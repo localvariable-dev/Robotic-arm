@@ -1,0 +1,91 @@
+# Robotic Arm Pick-and-Place — Phase 1
+
+A modular Python foundation for a six-block pick-and-place task in CoppeliaSim. The project separates pure/testable kinematics and task-state logic from simulator I/O. CoppeliaSim is required for the actual 3D simulation; the binary scene `simulation/scene.ttt` is produced by the included scene-builder script when run inside CoppeliaSim.
+
+## Status and verification
+
+- Pure Python kinematics, controller state machine, configuration checks and task planning are designed to run without CoppeliaSim.
+- `simulation/scripts/build_scene.lua` builds a primitive-based articulated 4-DOF arm, parallel jaw gripper, workbench, trays and six colored blocks/target slots using CoppeliaSim's Lua API. Save the resulting scene as `simulation/scene.ttt` from CoppeliaSim.
+- The scene builder and remote API integration have **not** been executed in this authoring environment. Do not interpret source-code availability as proof of a successful simulator run.
+- The built-in primitive arm is a 4-DOF demo arm, not a certified robot. Collision-free motion planning is not provided; the demo uses conservative approach/retreat waypoints and aborts on errors.
+
+## Requirements
+
+- Python 3.10+
+- CoppeliaSim (current stable edition recommended)
+- CoppeliaSim ZeroMQ remote API server enabled (normally available in recent CoppeliaSim releases)
+- Python package `coppeliasim-zmqremoteapi-client`
+
+Install Python dependencies:
+
+```bash
+python -m venv .venv
+# macOS/Linux
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+## Create the simulation scene
+
+1. Open CoppeliaSim.
+2. Open the Lua editor and load `simulation/scripts/build_scene.lua`, or paste its contents into a new script.
+3. Run the script once in the scene. It creates the workbench, trays, six blocks, 4-DOF arm and gripper. If the script finishes successfully, save the scene as `simulation/scene.ttt`.
+4. Enable the ZeroMQ remote API server (usually via the add-on/menu supplied with your CoppeliaSim version). The default endpoint is `localhost:23000`.
+5. If scene-builder errors occur due to simulator-version API differences, inspect the console. The Python-only tests remain independent of CoppeliaSim.
+
+## Run tests and demo
+
+Pure-Python tests:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Start the end-to-end demo after creating and opening the scene:
+
+```bash
+python run_demo.py --scene simulation/scene.ttt
+```
+
+Optional endpoint override:
+
+```bash
+python run_demo.py --host localhost --port 23000
+```
+
+The demo connects to the already running CoppeliaSim instance, verifies expected object/joint handles, moves joints with simulator target APIs, and performs sequential pick/place. Its built-in gripper adapter uses a proximity/grasp-distance check plus simulator parenting for reliable demonstration attachment; release restores world parenting and places the block at the requested position. It deliberately stops rather than marking a failed grasp as successful.
+
+## Architecture
+
+- `src/kinematics/arm4dof.py`: forward kinematics and numerical inverse kinematics for a four-axis yaw/shoulder/elbow/wrist-pitch arm.
+- `src/controller/state_machine.py`: explicit task states, transitions and fail-safe error state.
+- `src/simulator_adapter/coppelia.py`: ZeroMQ API wrapper, target motion, block handling and verification.
+- `src/task_manager/pick_place.py`: six-block sequential pick/place orchestration.
+- `simulation/scripts/build_scene.lua`: builds a non-static articulated primitive scene inside CoppeliaSim.
+- `config/simulation_config.json`: coordinate frames, named objects, waypoints, motion limits and tray slot locations.
+
+## Coordinate conventions and limitations
+
+World coordinates are metres; arm base frame origin is the centre of the base at workbench height. Joint angles are radians in Python and simulator joint targets. IK uses a geometric/numerical damped least-squares solver with joint limits. The arm is a simplified 4-DOF yaw + planar 3-link chain and targets position plus a wrist pitch; it does not solve arbitrary six-dimensional tool orientations. Targets must lie within the workspace. The transfer path is a series of safe-height waypoints, not a general obstacle-avoidance planner.
+
+The simulated attachment is intentionally explicit and verifiable. It is suitable for a learning demo, not a physically validated gripper design.
+
+## Troubleshooting
+
+- **Cannot connect**: start CoppeliaSim and verify the ZeroMQ remote API server listens on port 23000.
+- **Missing handle**: object names in the scene and `config/simulation_config.json` must match exactly; rerun the scene builder in a fresh scene.
+- **Target unreachable**: adjust tray positions or shoulder/elbow limits in the config. The controller will fail safe instead of reporting success.
+- **Scene file absent**: `.ttt` is generated by CoppeliaSim; it is not synthesized or faked by Python.
+
+## Phase 1 acceptance checklist
+
+- [ ] Scene saved and opens in CoppeliaSim
+- [ ] Four controllable joints respond to target commands
+- [ ] Gripper close/grasp/release checked in simulation
+- [ ] Six blocks placed in designated slots
+- [ ] Placement and grasp checks observed
+- [ ] `python -m unittest discover -s tests -v` passes
+- [ ] End-to-end demo run and result recorded
+
+Only mark simulator-specific items complete after observing them in CoppeliaSim.
