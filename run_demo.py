@@ -29,7 +29,10 @@ def main() -> int:
         print("ERROR: scene file not found. Create/save it using simulation/scripts/build_scene.lua in CoppeliaSim.")
         return 2
     try:
-        adapter = CoppeliaAdapter(host, port, cfg["simulation"]["motion_timeout_s"])
+        adapter = CoppeliaAdapter(
+            host, port, cfg["simulation"]["motion_timeout_s"],
+            base_world=cfg["frame"]["base_world"], tool_offset=cfg["frame"]["tool_offset"],
+        )
         adapter.verify_scene(cfg["objects"]["blocks"])
         adapter.start()
         task = PickPlaceTask(
