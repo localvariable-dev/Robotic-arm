@@ -8,16 +8,16 @@
     "max_joint_acceleration": 1.2
   },
   "frame": {
-    "description": "World XYZ metres; arm base at origin; Z up. Base frame and world frame coincide in this demo.",
+    "description": "World XYZ metres; base yaw axis at world origin; shoulder pivot at (0, 0, 1.03) m; Z up.",
     "base_world": [
       0,
       0,
-      0.82
+      1.03
     ],
     "tool_offset": [
       0,
       0,
-      0.12
+      0.08
     ]
   },
   "robot": {
@@ -52,15 +52,15 @@
     ],
     "grasp_tolerance_m": 0.09,
     "approach_height_m": 0.12,
-    "place_height_m": 0.02,
+    "place_height_m": 0,
     "safe_transfer_height_m": 0.2
   },
   "gripper": {
     "left_joint": "gripper_left_joint",
     "right_joint": "gripper_right_joint",
-    "open_position": 0.035,
-    "closed_position": 0.002,
-    "attach_distance_m": 0.085
+    "open_position": 0,
+    "closed_position": 0.033,
+    "attach_distance_m": 0.09
   },
   "objects": {
     "blocks": [
@@ -80,64 +80,64 @@
     [
       0.38,
       -0.28,
-      0.91
+      0.875
     ],
     [
       0.48,
       -0.28,
-      0.91
+      0.875
     ],
     [
       0.58,
       -0.28,
-      0.91
+      0.875
     ],
     [
       0.38,
       -0.18,
-      0.91
+      0.875
     ],
     [
       0.48,
       -0.18,
-      0.91
+      0.875
     ],
     [
       0.58,
       -0.18,
-      0.91
+      0.875
     ]
   ],
   "destination_positions": [
     [
       0.38,
       0.2,
-      0.91
+      0.875
     ],
     [
       0.48,
       0.2,
-      0.91
+      0.875
     ],
     [
       0.58,
       0.2,
-      0.91
+      0.875
     ],
     [
       0.38,
       0.3,
-      0.91
+      0.875
     ],
     [
       0.48,
       0.3,
-      0.91
+      0.875
     ],
     [
       0.58,
       0.3,
-      0.91
+      0.875
     ]
   ]
 }
