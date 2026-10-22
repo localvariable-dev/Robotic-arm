@@ -1,0 +1,26 @@
+name: Python tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Validate Python syntax
+        run: python -m compileall -q src run_demo.py tests
+      - name: Validate simulation configuration
+        run: python -c "import json; json.load(open('config/simulation_config.json', encoding='utf-8'))"
+      - name: Run simulator-independent tests
+        run: python -m unittest discover -s tests -v
