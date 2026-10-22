@@ -1,0 +1,143 @@
+{
+  "simulation": {
+    "host": "localhost",
+    "port": 23000,
+    "dt": 0.05,
+    "motion_timeout_s": 12,
+    "max_joint_velocity": 0.7,
+    "max_joint_acceleration": 1.2
+  },
+  "frame": {
+    "description": "World XYZ metres; arm base at origin; Z up. Base frame and world frame coincide in this demo.",
+    "base_world": [
+      0,
+      0,
+      0.82
+    ],
+    "tool_offset": [
+      0,
+      0,
+      0.12
+    ]
+  },
+  "robot": {
+    "joint_names": [
+      "joint_base",
+      "joint_shoulder",
+      "joint_elbow",
+      "joint_wrist"
+    ],
+    "link_lengths": [
+      0.28,
+      0.3,
+      0.2
+    ],
+    "joint_limits_rad": [
+      [
+        -2.8,
+        2.8
+      ],
+      [
+        -1.6,
+        1.6
+      ],
+      [
+        -2.2,
+        2.2
+      ],
+      [
+        -2,
+        2
+      ]
+    ],
+    "grasp_tolerance_m": 0.09,
+    "approach_height_m": 0.12,
+    "place_height_m": 0.02,
+    "safe_transfer_height_m": 0.2
+  },
+  "gripper": {
+    "left_joint": "gripper_left_joint",
+    "right_joint": "gripper_right_joint",
+    "open_position": 0.035,
+    "closed_position": 0.002,
+    "attach_distance_m": 0.085
+  },
+  "objects": {
+    "blocks": [
+      "block_red",
+      "block_blue",
+      "block_green",
+      "block_yellow",
+      "block_orange",
+      "block_purple"
+    ],
+    "source_tray": "source_tray",
+    "destination_tray": "destination_tray",
+    "base": "robot_base",
+    "tool": "tool_center_point"
+  },
+  "source_positions": [
+    [
+      0.38,
+      -0.28,
+      0.91
+    ],
+    [
+      0.48,
+      -0.28,
+      0.91
+    ],
+    [
+      0.58,
+      -0.28,
+      0.91
+    ],
+    [
+      0.38,
+      -0.18,
+      0.91
+    ],
+    [
+      0.48,
+      -0.18,
+      0.91
+    ],
+    [
+      0.58,
+      -0.18,
+      0.91
+    ]
+  ],
+  "destination_positions": [
+    [
+      0.38,
+      0.2,
+      0.91
+    ],
+    [
+      0.48,
+      0.2,
+      0.91
+    ],
+    [
+      0.58,
+      0.2,
+      0.91
+    ],
+    [
+      0.38,
+      0.3,
+      0.91
+    ],
+    [
+      0.48,
+      0.3,
+      0.91
+    ],
+    [
+      0.58,
+      0.3,
+      0.91
+    ]
+  ]
+}
