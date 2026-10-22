@@ -22,10 +22,19 @@ class KinematicsTests(unittest.TestCase):
         self.assertFalse(result.reachable)
 
     def test_inverse_reaches_inside_workspace(self):
-        target = self.arm.forward((0.1, 0.4, -0.5, 0.0))
-        result = self.arm.inverse(target, seed=(0.1, 0.2, -0.3, 0.0), position_tolerance=0.025)
+        q = (0.1, 0.4, -0.5, 0.0)
+        target = self.arm.forward(q)
+        result = self.arm.inverse(target, wrist_pitch=q[3], seed=(0.1, 0.2, -0.3, 0.0), position_tolerance=0.025)
         self.assertTrue(result.reachable, result)
         self.assertLessEqual(result.position_error, 0.025)
+
+    def test_inverse_honours_nonzero_wrist_pitch(self):
+        q = (0.2, 0.3, -0.4, 0.35)
+        target = self.arm.forward(q)
+        result = self.arm.inverse(target, wrist_pitch=q[3], seed=(0.2, 0.2, -0.3, 0.35), position_tolerance=0.025)
+        self.assertTrue(result.reachable, result)
+        self.assertLessEqual(result.position_error, 0.025)
+        self.assertAlmostEqual(result.joints[3], q[3], places=6)
 
 
 if __name__ == "__main__":
